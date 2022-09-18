@@ -17,9 +17,15 @@
 
 name:   db "GRAPICSLIB"
 [bits 16]
-grapics_main:
-	mov ax, cs		;setup segment reg
+grapics_main:		
+	mov ax, 0x0000			;get video mode
+	mov ds, ax
+	mov dl, [ds:0x0449]
+
+	mov ax, cs		    ;setup segment reg
 	mov ds, ax	
+
+	mov [cs: gr_prev_dmode], dl		;sve starting dmode
 
 	mov ax, 0x0013		;set screen mode
 	int 0x10
@@ -58,6 +64,13 @@ gr_loop:
 	mov ax, 100
 	call sys_delay
 	call gr_clear
+
+	mov ax, cs		    ;setup segment reg
+	mov ds, ax	
+	xor ax, ax
+	mov al, [cs:gr_prev_dmode] ;get saved dmode
+	int 0x10			;set dmode
+
 	ret
 
 
@@ -297,3 +310,5 @@ gr_tri_color:	db 0x01
 
 gr_screen_w:	dw 0x0140
 gr_screen_h:	dw 0x0000
+
+gr_prev_dmode:  db 0x00

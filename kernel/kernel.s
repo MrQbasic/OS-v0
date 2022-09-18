@@ -6,6 +6,7 @@ start:
 	call check
 	call screen_print_clear
 	call minimon
+	call screen_print_clear
 	call os_main
 jmp $
 
